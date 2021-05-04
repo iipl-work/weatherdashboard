@@ -112,6 +112,12 @@ export default {
      },
      tempVar: {
        tempToday: [
+         {hour: '11.00 AM', temp: '35'},
+          {hour: '12.00 PM', temp: '36'},
+          {hour: '1.00 PM', temp: '37'},
+          {hour: '2.00 PM', temp: '38'},
+          {hour: '3.00 PM', temp: '36'},
+          {hour: '4.00 PM', temp: '35'},
          // gets added dynamically by this.getSetHourlyTempInfoToday()
        ],
      },
