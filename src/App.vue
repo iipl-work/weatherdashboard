@@ -8,7 +8,8 @@
               id="location-input"
               type="text"
               ref="input"
-              placeholder="Location?"  v-model="formDat.locName"
+              placeholder="Location?"
+              v-model="formDat.locName"
               @keyup.enter="getcurrentWeather"
             />
             <button id="search-btn" @click="getcurrentWeather">
@@ -97,54 +98,56 @@ import axios from "axios";
 export default {
   name: "app",
   props: [],
-  country:[ {"af" : "Afrikaans",
-"al" : "Albanian",
-"ar" : "Arabic",
-"az" : "Azerbaijani",
-"bg" : "Bulgarian",
-"ca" : "Catalan",
-"cz" : "Czech",
-"da" : "Danish",
-"de" : "German",
-"el" : "Greek",
-"en" : "English",
-"eu" : "Basque",
-"fa" :"Persian(Farsi)",
-"fi" : "Finnish",
-"fr" : "French",
-"gl" : "Galician",
-"he" : "Hebrew",
-"hi" : "Hindi",
-"hr" : "Croatian",
-"hu" : "Hungarian",
-"id" : "Indonesian",
-"it" : "Italian",
-"ja" : "Japanese",
-"kr" : "Korean",
-"la" : "Latvian",
-"lt" : "Lithuanian",
-"mk" : "Macedonian",
-"no" : "Norwegian",
-"nl" : "Dutch",
-"pl" : "Polish",
-"pt" : "Portuguese",
-"pt_br" : "Português(Brasil)",
-"ro" : "Romanian",
-"ru" : "Russian",
-"sv,se" : "Swedish",
-"sk" : "Slovak",
-"sl" : "Slovenian",
-"sp,es" : "Spanish",
-"sr" : "Serbian",
-"th" : "Thai",
-"tr" : "Turkish",
-"ua,uk" : "Ukrainian",
-"vi" : "Vietnamese",
-"zh_cnChinese" : "Simplified",
-"zh_twChinese" : "Traditional",
-"zu" : "Zulu"
-
-  }],
+  country: [
+    {
+      af: "Afrikaans",
+      al: "Albanian",
+      ar: "Arabic",
+      az: "Azerbaijani",
+      bg: "Bulgarian",
+      ca: "Catalan",
+      cz: "Czech",
+      da: "Danish",
+      de: "German",
+      el: "Greek",
+      en: "English",
+      eu: "Basque",
+      fa: "Persian(Farsi)",
+      fi: "Finnish",
+      fr: "French",
+      gl: "Galician",
+      he: "Hebrew",
+      hi: "Hindi",
+      hr: "Croatian",
+      hu: "Hungarian",
+      id: "Indonesian",
+      it: "Italian",
+      ja: "Japanese",
+      kr: "Korean",
+      la: "Latvian",
+      lt: "Lithuanian",
+      mk: "Macedonian",
+      no: "Norwegian",
+      nl: "Dutch",
+      pl: "Polish",
+      pt: "Portuguese",
+      pt_br: "Português(Brasil)",
+      ro: "Romanian",
+      ru: "Russian",
+      "sv,se": "Swedish",
+      sk: "Slovak",
+      sl: "Slovenian",
+      "sp,es": "Spanish",
+      sr: "Serbian",
+      th: "Thai",
+      tr: "Turkish",
+      "ua,uk": "Ukrainian",
+      vi: "Vietnamese",
+      zh_cnChinese: "Simplified",
+      zh_twChinese: "Traditional",
+      zu: "Zulu",
+    },
+  ],
   components: {
     "dashboard-content": Content,
   },
@@ -191,26 +194,49 @@ export default {
       },
     };
   },
+  mounted () {
+    this.getcurrentWeather();
+  },
   methods: {
     getcurrentWeather() {
-
       axios
         .get(
           `http://api.openweathermap.org/data/2.5/weather?q=${this.formDat.locName}&appid=7c775f7c5b40eb93622b1924a4e2c7ea`
         )
         .then((response) => {
           //  console.log(response.data)
-          this.currentWeather.formatted_lat = response.data.coord.lat;       
+          this.currentWeather.formatted_lat = response.data.coord.lat;
           this.currentWeather.formatted_long = response.data.coord.lon;
-          this.currentWeather.temp =  Math.round((5 / 9) * (response.data.main.temp - 32));
-          this.currentWeather.full_location = response.data.name+","+response.data.sys.country;
-          this.errorMsg = "" //this.country['ru'];
-          // this.currentWeather.summary = response.data.weather.description;
+          this.currentWeather.temp = Math.round(
+             (response.data.main.temp - 273)
+          );
+          this.currentWeather.full_location =
+            response.data.name + "," + response.data.sys.country;
+          this.errorMsg = ""; //this.country['ru'];
+          this.currentWeather.summary = response.data.weather[0].description;
+          this.currentWeather.todayHighLow.todayTempHigh = Math.round(
+            (response.data.main.temp_max - 273)
+          );
+          this.currentWeather.todayHighLow.todayTempLow = Math.round(
+           (response.data.main.temp_min - 273)
+          );
+          this.highlights.windStatus.windSpeed = response.data.wind.speed + "";
+          this.highlights.visibility = response.data.visibility;
+
+          var currentDate = new Date().toLocaleString();
+            console.log(currentDate);
+
+            this.currentWeather.time = currentDate;
+  
+            // var currentDateWithFormat = new Date().toJSON().slice(0,10).replace(/-/g,'/');
+            // console.log(currentDateWithFormat);
         })
         .catch((error) => {
-          console.log(error)
+          console.log(error);
           this.errorMsg = "Error retrieving data";
-          alert(` "${this.formDat.locName}" is not a valid location. Please enter a valid location.`);
+          alert(
+            ` "${this.formDat.locName}" is not a valid location. Please enter a valid location.`
+          );
         });
     },
 
